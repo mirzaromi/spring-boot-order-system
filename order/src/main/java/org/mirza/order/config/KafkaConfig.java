@@ -1,10 +1,12 @@
 package org.mirza.order.config;
 
+import lombok.RequiredArgsConstructor;
 import org.apache.kafka.clients.CommonClientConfigs;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.IntegerSerializer;
 import org.apache.kafka.common.serialization.StringSerializer;
+import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.core.DefaultKafkaProducerFactory;
@@ -17,20 +19,14 @@ import java.util.Objects;
 import java.util.Properties;
 
 @Configuration
+@RequiredArgsConstructor
 public class KafkaConfig {
+
+    private final KafkaProperties kafkaProperties;
 
     @Bean
     public Map<String, Object> producerConfigs() {
-        Map<String, Object> props = new HashMap<>();
-        props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:29092");
-        props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
-        props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
-        props.put(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, "PLAINTEXT");
-
-        props.put(ProducerConfig.REQUEST_TIMEOUT_MS_CONFIG, 15000); // 15 seconds
-        props.put(ProducerConfig.MAX_BLOCK_MS_CONFIG, 15000); // Max wait for metadata
-//
-        return props;
+        return kafkaProperties.getProducer().buildProperties(null);
     }
 
     @Bean

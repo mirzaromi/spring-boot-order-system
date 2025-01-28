@@ -25,7 +25,7 @@ public class OrderController {
     @PostMapping
     public ResponseEntity<BaseResponse<CreateOrderResponseDto>> createOrder(CreateOrderRequestDto requestDto) {
         try {
-            kafkaTemplate.send("my-topic", "order-key", "the value");
+            kafkaTemplate.send("my-second-topic", "the value");
             return ResponseEntity.ok(new BaseResponse<>());
         } catch (Exception e) {
             log.error("Kafka send failed", e);
