@@ -1,0 +1,51 @@
+services:
+  kafka:
+    image: confluentinc/cp-kafka:latest
+    hostname: my-kafka
+    container_name: my-kafka
+    ports:
+      - "29092:29092"  # External access for host machine
+      - "9093:9093"    # Controller port
+    environment:
+      KAFKA_KRAFT_MODE: "true"
+      KAFKA_PROCESS_ROLES: "controller,broker"
+      KAFKA_NODE_ID: 1
+      CLUSTER_ID: "2WonQXwPTqWpfq3dZ40aXQ"  # 22-character random string
+      KAFKA_CONTROLLER_QUORUM_VOTERS: "1@my-kafka:9093"
+      KAFKA_LISTENERS: PLAINTEXT_INTERNAL://0.0.0.0:9092,CONTROLLER://0.0.0.0:9093,PLAINTEXT_HOST://0.0.0.0:29092
+      # KAFKA_LISTENERS: "PLAINTEXT_INTERNAL://0.0.0.0:9092,CONTROLLER://0.0.0.0:9093,PLAINTEXT_HOST://0.0.0.0:29092"
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT_INTERNAL://my-kafka:9092,PLAINTEXT_HOST://localhost:29092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: "CONTROLLER:PLAINTEXT,PLAINTEXT_INTERNAL:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT"
+      KAFKA_CONTROLLER_LISTENER_NAMES: "CONTROLLER"
+      KAFKA_INTER_BROKER_LISTENER_NAME: "PLAINTEXT_INTERNAL"
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+    volumes:
+      - ./data/kafka:/var/lib/kafka/data
+    healthcheck:
+      test: ["CMD-SHELL", "kafka-broker-api-versions --bootstrap-server my-kafka:9092"]
+      interval: 10s
+      timeout: 10s
+      retries: 20
+    networks:
+      - kafka-net
+
+  kafdrop:
+    image: obsidiandynamics/kafdrop:latest
+    container_name: kafdrop
+    depends_on:
+      kafka:
+        condition: service_healthy
+    ports:
+      - "9000:9000"
+    environment:
+      KAFKA_BROKERCONNECT: "my-kafka:9092"
+      JVM_OPTS: "-Xms32M -Xmx64M"
+    networks:
+      - kafka-net
+
+networks:
+  kafka-net:
+    driver: bridge
