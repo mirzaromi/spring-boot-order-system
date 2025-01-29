@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.mirza.entity.enums.NotificationStatusEnum;
 import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 
 import java.util.Date;
 
@@ -37,4 +38,24 @@ public class Notification {
     @CreatedDate
     @Column(nullable = false, updatable = false)
     private Date createdAt;
+
+    @LastModifiedDate
+    @Column(nullable = false)
+    private Date updatedAt;
+
+    /**
+     * On create.
+     */
+    @PrePersist
+    public void onCreate() {
+        createdAt = updatedAt = new Date();
+    }
+
+    /**
+     * On update.
+     */
+    @PreUpdate
+    public void onUpdate() {
+        updatedAt = new Date();
+    }
 }

@@ -41,4 +41,19 @@ public class Order {
     @Column(nullable = false)
     private Date updatedAt;
 
+    /**
+     * On create.
+     */
+    @PrePersist
+    public void onCreate() {
+        createdAt = updatedAt = new Date();
+    }
+
+    /**
+     * On update.
+     */
+    @PreUpdate
+    public void onUpdate() {
+        updatedAt = new Date();
+    }
 }

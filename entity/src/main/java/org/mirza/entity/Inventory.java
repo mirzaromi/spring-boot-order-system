@@ -40,9 +40,25 @@ public class Inventory {
 
     @CreatedDate
     @Column(nullable = false, updatable = false)
-    private Date createdAt;
+    private Date createdAt = new Date();
 
     @LastModifiedDate
     @Column(nullable = false)
-    private Date updatedAt;
+    private Date updatedAt = new Date();
+
+    /**
+     * On create.
+     */
+    @PrePersist
+    public void onCreate() {
+        createdAt = updatedAt = new Date();
+    }
+
+    /**
+     * On update.
+     */
+    @PreUpdate
+    public void onUpdate() {
+        updatedAt = new Date();
+    }
 }
