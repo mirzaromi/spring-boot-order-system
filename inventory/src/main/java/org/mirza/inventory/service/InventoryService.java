@@ -20,7 +20,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-@Transactional
+@Transactional(rollbackOn = {RuntimeException.class, Exception.class})
 @Slf4j
 public class InventoryService {
     private final InventoryRepository inventoryRepository;

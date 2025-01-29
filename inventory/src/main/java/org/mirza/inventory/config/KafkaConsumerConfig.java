@@ -54,7 +54,7 @@ public class KafkaConsumerConfig {
         );
 
         // Stop retrying for specific errors
-        errorHandler.addNotRetryableExceptions(RuntimeException.class);
+        errorHandler.addNotRetryableExceptions(Exception.class);
 
         return errorHandler;
     }
