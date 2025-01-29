@@ -8,6 +8,7 @@ import org.mirza.entity.Order;
 import org.mirza.entity.OrderDetail;
 import org.mirza.entity.User;
 import org.mirza.entity.enums.OrderStatusEnum;
+import org.mirza.order.dto.InventoryFailedMessageDto;
 import org.mirza.order.dto.ItemDto;
 import org.mirza.order.dto.request.CreateOrderRequestDto;
 import org.mirza.order.dto.OrderCreatedMessageDto;
@@ -54,6 +55,7 @@ public class OrderService {
         orderCreatedMessageDto.setUserId(user.getId());
         orderCreatedMessageDto.setEventId(orderCreatedTopic+ "-" + order.getId());
         orderCreatedMessageDto.setItems(requestDto.getItems());
+        orderCreatedMessageDto.setOrderId(order.getId());
         return orderCreatedMessageDto;
     }
 
@@ -117,5 +119,16 @@ public class OrderService {
             log.error("Insufficient stock for product: {}", inventory.getId());
             throw new GlobalException(ExceptionEnum.INSUFFICIENT_PRODUCT_STOCK);
         }
+    }
+
+    // compensation from inventory failed
+    public void cancelOrder(InventoryFailedMessageDto messageDto) {
+        Order order = orderRepository.findById(messageDto.getOrderId())
+                .orElseThrow(() -> new NotFoundException(ExceptionEnum.ORDER_NOT_FOUND));
+
+        order.setStatus(OrderStatusEnum.FAILED);
+        order.setRemark(messageDto.getMessage());
+
+        orderRepository.save(order);
     }
 }
