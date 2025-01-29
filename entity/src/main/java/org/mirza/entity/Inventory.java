@@ -22,8 +22,7 @@ public class Inventory {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @Column(nullable = false)
-    @UniqueElements
+    @Column(nullable = false, unique = true)
     private String productId;
 
     @Column(nullable = false)
