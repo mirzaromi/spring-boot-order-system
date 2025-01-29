@@ -123,12 +123,15 @@ public class OrderService {
 
     // compensation from inventory failed
     public void cancelOrder(InventoryFailedMessageDto messageDto) {
+        log.info("Cancelling order for user ID: {}", messageDto.getUserId());
+
         Order order = orderRepository.findById(messageDto.getOrderId())
                 .orElseThrow(() -> new NotFoundException(ExceptionEnum.ORDER_NOT_FOUND));
 
         order.setStatus(OrderStatusEnum.FAILED);
         order.setRemark(messageDto.getMessage());
 
+        log.info("Cancelling order for order ID: {} with cause: {}", messageDto.getOrderId(), messageDto.getMessage());
         orderRepository.save(order);
     }
 }
