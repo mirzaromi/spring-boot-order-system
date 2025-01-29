@@ -22,10 +22,23 @@ public class OrderController {
     private final KafkaTemplate<String, String> kafkaTemplate;
 
 
-    @PostMapping
+    @PostMapping("/second-topic")
     public ResponseEntity<BaseResponse<CreateOrderResponseDto>> createOrder(CreateOrderRequestDto requestDto) {
         try {
-            kafkaTemplate.send("my-second-topic", "the value");
+            kafkaTemplate.send("my-second-topic", "the message from second topic");
+            return ResponseEntity.ok(new BaseResponse<>());
+        } catch (Exception e) {
+            log.error("Kafka send failed", e);
+            return ResponseEntity.internalServerError().body(
+                    new BaseResponse<>(500, "Kafka communication failed", null)
+            );
+        }
+    }
+
+    @PostMapping
+    public ResponseEntity<BaseResponse<CreateOrderResponseDto>> createOrderFirstTopic(CreateOrderRequestDto requestDto) {
+        try {
+            kafkaTemplate.send("my-second-topic", "the message from first topic");
             return ResponseEntity.ok(new BaseResponse<>());
         } catch (Exception e) {
             log.error("Kafka send failed", e);
