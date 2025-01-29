@@ -1,7 +1,9 @@
 package org.mirza.order.exception;
 
+import org.mirza.order.enums.ExceptionEnum;
+
 public class GlobalException extends RuntimeException {
-    public GlobalException(String message) {
-        super(message);
+    public GlobalException(ExceptionEnum message) {
+        super(message.getMessage());
     }
 }

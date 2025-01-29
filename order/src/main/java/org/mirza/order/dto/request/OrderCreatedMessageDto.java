@@ -1,6 +1,5 @@
 package org.mirza.order.dto.request;
 
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -9,17 +8,12 @@ import org.mirza.order.dto.ItemDto;
 
 import java.util.List;
 
-@Setter
-@Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class CreateOrderRequestDto {
-    @NotNull
+@Getter
+@Setter
+public class OrderCreatedMessageDto {
     private long userId;
     private String eventId;
     private List<ItemDto> items;
-
-
 }
-
-
