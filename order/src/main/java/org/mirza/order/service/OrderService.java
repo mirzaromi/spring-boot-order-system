@@ -52,7 +52,7 @@ public class OrderService {
     private OrderCreatedMessageDto createOrderCreatedMessage(CreateOrderRequestDto requestDto, User user, Order order) {
         OrderCreatedMessageDto orderCreatedMessageDto = new OrderCreatedMessageDto();
         orderCreatedMessageDto.setUserId(user.getId());
-        orderCreatedMessageDto.setEventId(orderCreatedTopic + order.getId());
+        orderCreatedMessageDto.setEventId(orderCreatedTopic+ "-" + order.getId());
         orderCreatedMessageDto.setItems(requestDto.getItems());
         return orderCreatedMessageDto;
     }

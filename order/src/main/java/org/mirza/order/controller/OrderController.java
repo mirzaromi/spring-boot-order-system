@@ -31,8 +31,8 @@ public class OrderController {
     private String orderCreatedTopic;
 
 
-    @PostMapping("/second-topic")
-    public ResponseEntity<BaseResponse<CreateOrderResponseDto>> createOrder(@Validated CreateOrderRequestDto requestDto) {
+    @PostMapping
+    public ResponseEntity<BaseResponse<CreateOrderResponseDto>> createOrder(@RequestBody @Validated CreateOrderRequestDto requestDto) {
         try {
             OrderCreatedMessageDto orderCreatedMessageDto = orderService.createOrder(requestDto);
             kafkaTemplate.send(orderCreatedTopic, jsonUtil.toJsonString(orderCreatedMessageDto));

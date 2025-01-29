@@ -16,10 +16,7 @@ import java.util.List;
 public class CreateOrderRequestDto {
     @NotNull
     private long userId;
-    private String eventId;
     private List<ItemDto> items;
-
-
 }
 
 
