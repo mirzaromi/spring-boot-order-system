@@ -27,7 +27,6 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-@Transactional
 public class OrderService {
     private final OrderRepository orderRepository;
     private final UserRepository userRepository;
@@ -37,6 +36,7 @@ public class OrderService {
     @Value("${kafka.producer.topic.order-created}")
     private String orderCreatedTopic;
 
+    @Transactional
     public OrderCreatedMessageDto createOrder(CreateOrderRequestDto requestDto) {
         log.info("Creating order for user ID: {}", requestDto.getUserId());
 

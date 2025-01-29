@@ -19,7 +19,7 @@ public class OrderListener {
             autoStartup = "${listen.auto.start:true}", concurrency = "${listen.concurrency:1}")
     public void consumeInventoryFailed(String message) {
         InventoryFailedMessageDto failedMessage = jsonUtil.toObject(message, InventoryFailedMessageDto.class);
-
+        orderService.cancelOrder(failedMessage);
         log.info("Received data: {}", message);
     }
 }
