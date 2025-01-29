@@ -20,6 +20,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 @Slf4j
 public class InventoryService {
     private final InventoryRepository inventoryRepository;
@@ -38,11 +39,13 @@ public class InventoryService {
             List<Inventory> inventoryList = updateInventoryStock(orderCreatedMessageDto);
 
             inventoryRepository.saveAll(inventoryList);
-
             publishInventoryUpdatedMessage(orderCreatedMessageDto);
+
         } catch (RuntimeException e) {
             log.error("Error reserving inventory: {}", e.getMessage(), e);
+
             publishInventoryFailedMessage(orderCreatedMessageDto, e);
+            throw e; // for triggering the @Transaction to roll back the process above
         }
     }
 
@@ -54,6 +57,7 @@ public class InventoryService {
                     log.info("Updating inventory with id: {}", inventory.getId());
                     validateStockAvailability(inventory, item.getQuantity());
                     inventory.setStock(inventory.getStock() - item.getQuantity());
+                    log.info("quantity of inventory: {}, is: {}", inventory.getName(), inventory.getStock());
                     return inventory;
                 })
                 .toList();
