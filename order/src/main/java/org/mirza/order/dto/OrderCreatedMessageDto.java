@@ -1,10 +1,9 @@
-package org.mirza.order.dto.request;
+package org.mirza.order.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.mirza.order.dto.ItemDto;
 
 import java.util.List;
 

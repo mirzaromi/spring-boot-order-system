@@ -10,7 +10,7 @@ import org.mirza.entity.User;
 import org.mirza.entity.enums.OrderStatusEnum;
 import org.mirza.order.dto.ItemDto;
 import org.mirza.order.dto.request.CreateOrderRequestDto;
-import org.mirza.order.dto.request.OrderCreatedMessageDto;
+import org.mirza.order.dto.OrderCreatedMessageDto;
 import org.mirza.order.enums.ExceptionEnum;
 import org.mirza.order.exception.GlobalException;
 import org.mirza.order.exception.NotFoundException;

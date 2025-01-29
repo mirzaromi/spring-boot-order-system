@@ -2,11 +2,9 @@ package org.mirza.order.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.kafka.clients.producer.ProducerRecord;
-import org.mirza.entity.Order;
 import org.mirza.entity.dto.BaseResponse;
 import org.mirza.order.dto.request.CreateOrderRequestDto;
-import org.mirza.order.dto.request.OrderCreatedMessageDto;
+import org.mirza.order.dto.OrderCreatedMessageDto;
 import org.mirza.order.dto.response.CreateOrderResponseDto;
 import org.mirza.order.service.OrderService;
 import org.mirza.order.util.JsonUtil;
@@ -15,8 +13,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Map;
 
 @RestController
 @RequestMapping("/order")
