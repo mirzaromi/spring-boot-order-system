@@ -8,6 +8,7 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
 import java.util.Date;
+import java.util.List;
 
 @Setter
 @Getter
@@ -21,6 +22,10 @@ public class Order {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(nullable = false)
     private User user;
+
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinColumn(nullable = false)
+    private List<OrderDetail> orderDetail;
 
     @Enumerated(EnumType.STRING)
     private OrderStatusEnum status;
