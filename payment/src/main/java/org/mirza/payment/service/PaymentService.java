@@ -39,10 +39,10 @@ public class PaymentService {
 
             // do payment
             // generate random number with certain probability
-            doProcessPayment(order);
+            Payment payment = doProcessPayment(order);
 
             // create message for notif service
-            paymentEventPublisher.publishPaymentSuccess(order);
+            paymentEventPublisher.publishPaymentSuccess(order, payment);
 
         } catch (RuntimeException e) {
             // for compensation
@@ -54,12 +54,14 @@ public class PaymentService {
 
     }
 
-    private void doProcessPayment(Order order) {
+    private Payment doProcessPayment(Order order) {
         Payment payment = paymentProcessor.createPayment(order, paymentSuccessProbability);
 
         if (payment.getStatus() == PaymentStatusEnum.FAILED) {
             handleFailedPayment(order, payment);
         }
+
+        return payment;
     }
 
     private void handleFailedPayment(Order order, Payment payment) {

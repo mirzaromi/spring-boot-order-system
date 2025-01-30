@@ -3,6 +3,7 @@ package org.mirza.payment.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.mirza.entity.Order;
+import org.mirza.entity.Payment;
 import org.mirza.payment.dto.InventoryUpdatedMessageDto;
 import org.mirza.payment.dto.PaymentFailedMessageDto;
 import org.mirza.payment.dto.PaymentSuccessMessageDto;
@@ -24,10 +25,11 @@ public class PaymentEventPublisher {
     @Value("${kafka.producer.topic.payment-failed}")
     private String paymentFailedTopic;
 
-    public void publishPaymentSuccess(Order order) {
+    public void publishPaymentSuccess(Order order, Payment payment) {
         PaymentSuccessMessageDto message = PaymentSuccessMessageDto.builder()
                 .orderId(order.getId())
                 .userId(order.getUser().getId())
+                .paymentId(payment.getId())
                 .eventId(generateEventId(paymentSuccessTopic, order.getId()))
                 .build();
 

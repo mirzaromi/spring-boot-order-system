@@ -8,5 +8,6 @@ import lombok.*;
 public class PaymentSuccessMessageDto {
     private long userId;
     private long orderId;
+    private long paymentId;
     private String eventId;
 }
