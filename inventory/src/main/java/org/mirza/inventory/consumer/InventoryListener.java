@@ -35,7 +35,7 @@ public class InventoryListener {
         inventoryService.reserveInventory(orderCreatedMessageDto);
     }
 
-    @KafkaListener(id = "consumeOrderCreated", topics = "${kafka.consumer.topic.payment-failed}",
+    @KafkaListener(id = "consumePaymentFailed", topics = "${kafka.consumer.topic.payment-failed}",
             autoStartup = "${listen.auto.start:true}", concurrency = "${listen.concurrency:1}")
     public void consumePaymentFailed(String message) {
         log.info("Received data: {} from topic: {}", message, paymentFailedTopic);
