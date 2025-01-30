@@ -23,8 +23,7 @@ public class Order {
     @JoinColumn(nullable = false)
     private User user;
 
-    @OneToMany(fetch = FetchType.LAZY)
-    @JoinColumn(nullable = false)
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "order")
     private List<OrderDetail> orderDetail;
 
     @Enumerated(EnumType.STRING)
