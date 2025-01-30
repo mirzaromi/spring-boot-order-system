@@ -12,6 +12,7 @@ public enum ExceptionEnum {
     INSUFFICIENT_PRODUCT_STOCK("Product Not Available"),
     ORDER_NOT_FOUND("Order Not Found"),
     ORDER_STATUS_NOT_ELIGIBLE("Order Status Not Eligible"),
+    PAYMENT_FAILED("Payment Failed"),
     ;
 
     private final String message;
