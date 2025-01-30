@@ -22,20 +22,10 @@ import java.util.Random;
 @Service
 @RequiredArgsConstructor
 public class PaymentService {
-    private final PaymentRepository paymentRepository;
     private final OrderRepository orderRepository;
     private final OrderValidator orderValidator;
     private final PaymentProcessor paymentProcessor;
-    private final Random random;
-    private final KafkaUtil kafkaUtil;
-    private final JsonUtil jsonUtil;
     private final PaymentEventPublisher paymentEventPublisher;
-
-    @Value("${kafka.producer.topic.payment-success}")
-    private String paymentSuccessTopic;
-
-    @Value("${kafka.producer.topic.payment-failed}")
-    private String paymentFailedTopic;
 
     @Value("${payment.success.probability:0.92}")
     private double paymentSuccessProbability;
