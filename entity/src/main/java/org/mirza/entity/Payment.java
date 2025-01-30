@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.mirza.entity.enums.PaymentStatusEnum;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
@@ -29,7 +30,10 @@ public class Payment {
     private double amount;
 
     @Column(nullable = false)
-    private String status;
+    @Enumerated(EnumType.STRING)
+    private PaymentStatusEnum status;
+
+    private String remark;
 
     @CreatedDate
     @Column(nullable = false, updatable = false)
