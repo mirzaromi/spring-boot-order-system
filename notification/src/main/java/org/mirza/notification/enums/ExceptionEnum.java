@@ -13,6 +13,9 @@ public enum ExceptionEnum {
     ORDER_NOT_FOUND("Order Not Found"),
     ORDER_STATUS_NOT_ELIGIBLE("Order Status Not Eligible"),
     PAYMENT_FAILED("Payment Failed"),
+    PAYMENT_NOT_FOUND("Payment Not Found"),
+    PAYMENT_STATUS_NOT_ELIGIBLE("Payment Status Not Eligible"),
+
     ;
 
     private final String message;
