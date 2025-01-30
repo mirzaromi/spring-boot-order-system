@@ -9,6 +9,7 @@ import org.mirza.entity.enums.OrderStatusEnum;
 import org.mirza.inventory.dto.InventoryFailedMessageDto;
 import org.mirza.inventory.dto.InventoryUpdatedMessageDto;
 import org.mirza.inventory.dto.OrderCreatedMessageDto;
+import org.mirza.inventory.dto.PaymentFailedMessageDto;
 import org.mirza.inventory.enums.ExceptionEnum;
 import org.mirza.inventory.exception.GlobalException;
 import org.mirza.inventory.exception.NotFoundException;
@@ -105,13 +106,32 @@ public class InventoryService {
     }
 
     private String buildEventId(String topic, Long orderId) {
-        return topic + "-" + orderId;
+        String timestamp = String.valueOf(System.currentTimeMillis());
+        return topic + "-" + orderId + "-" + timestamp;
     }
     private void validateStockAvailability(Inventory inventory, int requestedQuantity) {
         if(inventory.getStock() < requestedQuantity) {
             log.error("Insufficient stock for product: {}", inventory.getId());
             throw new GlobalException(ExceptionEnum.INSUFFICIENT_PRODUCT_STOCK);
         }
+    }
+
+    public void compensatePaymentFailed(PaymentFailedMessageDto paymentFailedMessageDto) {
+        log.info("Compensate payment failed");
+        Order order = orderRepository.findOrderById(paymentFailedMessageDto.getOrderId())
+                .orElseThrow(() -> new NotFoundException(ExceptionEnum.ORDER_NOT_FOUND));
+
+        List<Inventory> inventories = order.getOrderDetail().stream()
+                .map(orderDetail -> {
+                    Inventory inventory = orderDetail.getInventory();
+                    log.info("Updating inventory with id: {}", inventory.getId());
+                    inventory.setStock(inventory.getStock() + orderDetail.getQuantity());
+                    log.info("quantity of inventory: {}, is: {}", inventory.getName(), inventory.getStock());
+                    return inventory;
+                })
+                .toList();
+
+        inventoryRepository.saveAll(inventories);
     }
 
 }

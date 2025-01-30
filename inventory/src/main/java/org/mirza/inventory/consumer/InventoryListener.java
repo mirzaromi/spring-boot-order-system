@@ -3,6 +3,7 @@ package org.mirza.inventory.consumer;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.mirza.inventory.dto.OrderCreatedMessageDto;
+import org.mirza.inventory.dto.PaymentFailedMessageDto;
 import org.mirza.inventory.service.InventoryService;
 import org.mirza.inventory.util.JsonUtil;
 import org.springframework.beans.factory.annotation.Value;
@@ -22,6 +23,9 @@ public class InventoryListener {
     @Value("${kafka.consumer.topic.order-created}")
     private String orderCreatedTopic;
 
+    @Value("${kafka.consumer.topic.payment-failed}")
+    private String paymentFailedTopic;
+
     @KafkaListener(id = "consumeOrderCreated", topics = "${kafka.consumer.topic.order-created}",
             autoStartup = "${listen.auto.start:true}", concurrency = "${listen.concurrency:1}")
     public void consumeOrderCreated(String message) {
@@ -30,4 +34,15 @@ public class InventoryListener {
         OrderCreatedMessageDto orderCreatedMessageDto = jsonUtil.toObject(message, OrderCreatedMessageDto.class);
         inventoryService.reserveInventory(orderCreatedMessageDto);
     }
+
+    @KafkaListener(id = "consumeOrderCreated", topics = "${kafka.consumer.topic.payment-failed}",
+            autoStartup = "${listen.auto.start:true}", concurrency = "${listen.concurrency:1}")
+    public void consumePaymentFailed(String message) {
+        log.info("Received data: {} from topic: {}", message, paymentFailedTopic);
+
+        PaymentFailedMessageDto paymentFailedMessageDto = jsonUtil.toObject(message, PaymentFailedMessageDto.class);
+        inventoryService.compensatePaymentFailed(paymentFailedMessageDto);
+    }
+
+
 }
