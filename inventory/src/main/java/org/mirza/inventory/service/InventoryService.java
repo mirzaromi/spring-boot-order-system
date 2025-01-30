@@ -4,6 +4,8 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.mirza.entity.Inventory;
+import org.mirza.entity.Order;
+import org.mirza.entity.enums.OrderStatusEnum;
 import org.mirza.inventory.dto.InventoryFailedMessageDto;
 import org.mirza.inventory.dto.InventoryUpdatedMessageDto;
 import org.mirza.inventory.dto.OrderCreatedMessageDto;
@@ -11,6 +13,7 @@ import org.mirza.inventory.enums.ExceptionEnum;
 import org.mirza.inventory.exception.GlobalException;
 import org.mirza.inventory.exception.NotFoundException;
 import org.mirza.inventory.repository.InventoryRepository;
+import org.mirza.inventory.repository.OrderRepository;
 import org.mirza.inventory.util.JsonUtil;
 import org.mirza.inventory.util.KafkaUtil;
 import org.springframework.beans.factory.annotation.Value;
@@ -26,6 +29,7 @@ public class InventoryService {
     private final InventoryRepository inventoryRepository;
     private final KafkaUtil kafkaUtil;
     private final JsonUtil jsonUtil;
+    private final OrderRepository orderRepository;
 
     @Value("${kafka.producer.topic.inventory-failed}")
     private String inventoryFailedTopic;
@@ -39,6 +43,10 @@ public class InventoryService {
             List<Inventory> inventoryList = updateInventoryStock(orderCreatedMessageDto);
 
             inventoryRepository.saveAll(inventoryList);
+
+            // set order status to reserved
+            setOrderStatusToReserved(orderCreatedMessageDto);
+
             publishInventoryUpdatedMessage(orderCreatedMessageDto);
 
         } catch (RuntimeException e) {
@@ -47,6 +55,13 @@ public class InventoryService {
             publishInventoryFailedMessage(orderCreatedMessageDto, e);
             throw e; // for triggering the @Transaction to roll back the process above
         }
+    }
+
+    private void setOrderStatusToReserved(OrderCreatedMessageDto orderCreatedMessageDto) {
+        Order order = orderRepository.findById(orderCreatedMessageDto.getOrderId())
+                        .orElseThrow(() -> new NotFoundException(ExceptionEnum.ORDER_NOT_FOUND));
+        order.setStatus(OrderStatusEnum.RESERVED);
+        orderRepository.save(order);
     }
 
     private List<Inventory> updateInventoryStock(OrderCreatedMessageDto orderCreatedMessageDto) {
