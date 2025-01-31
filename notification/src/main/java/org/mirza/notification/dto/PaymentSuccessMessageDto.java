@@ -2,10 +2,14 @@ package org.mirza.notification.dto;
 
 import lombok.*;
 
+import java.io.Serializable;
+
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Builder
-public class PaymentSuccessMessageDto {
+public class PaymentSuccessMessageDto implements Serializable {
     private long userId;
     private long orderId;
     private long paymentId;
