@@ -26,6 +26,10 @@ public class Notification {
     @JoinColumn(nullable = false)
     private User user;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(nullable = false)
+    private Order order;
+
     @Column(nullable = false)
     private String message;
 
