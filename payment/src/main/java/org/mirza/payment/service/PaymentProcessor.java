@@ -20,11 +20,15 @@ public class PaymentProcessor {
     public Payment createPayment(Order order, double successProbability) {
         log.info("Create payment with order id {}", order.getId());
 
-        boolean isSuccessful = random.nextDouble() <= successProbability;
+        double probability = random.nextDouble();
+        log.info("Probability {}", probability);
+
+        boolean isSuccessful = probability <= successProbability;
+        log.info("isSuccessful {}", isSuccessful);
 
         Payment payment = new Payment();
-        payment.setId(order.getId());
         payment.setOrder(order);
+        payment.setAmount(order.getTotalPrice());
         payment.setStatus(isSuccessful ? PaymentStatusEnum.SUCCESS : PaymentStatusEnum.FAILED);
         payment.setRemark(isSuccessful ? null : "Failed");
 

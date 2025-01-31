@@ -41,12 +41,17 @@ public class PaymentService {
             // generate random number with certain probability
             Payment payment = doProcessPayment(order);
 
+            // post process
+            order.setStatus(OrderStatusEnum.SUCCESS);
+            orderRepository.save(order);
+
             // create message for notif service
             paymentEventPublisher.publishPaymentSuccess(order, payment);
 
         } catch (RuntimeException e) {
             // for compensation
             log.info("Error processing payment {}", inventoryUpdatedMessageDto);
+            log.info("Error message: {}", e.getMessage());
             // create message for notif service
             paymentEventPublisher.publishPaymentFailed(inventoryUpdatedMessageDto);
         }
