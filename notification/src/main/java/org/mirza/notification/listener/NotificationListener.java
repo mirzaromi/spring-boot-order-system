@@ -25,6 +25,6 @@ public class NotificationListener {
         log.info("Received data: {} from topic: {}", message, paymentSuccessTopic);
 
         PaymentSuccessMessageDto paymentSuccessMessageDto = jsonUtil.toObject(message, PaymentSuccessMessageDto.class);
-
+        notificationService.sendNotification(paymentSuccessMessageDto);
     }
 }
