@@ -12,7 +12,7 @@ public class KafkaUtil {
     private final KafkaTemplate<String, String> kafkaTemplate;
 
     public void send(String topic, String message) {
-        log.info("Sending message to topic {}", topic);
+        log.info("Sending to topic: {}, message: {}", topic, message);
         kafkaTemplate.send(topic, message);
     }
 }
