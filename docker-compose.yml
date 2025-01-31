@@ -2,7 +2,7 @@ version: '3.8'
 services:
   postgres:
     image: postgres:12.12
-    container_name: my_postgres_test
+    container_name: order-system-db
     restart: always
     environment:
       POSTGRES_DB: order_system
@@ -13,6 +13,131 @@ services:
     volumes:
       # - postgres_data:/var/lib/postgresql/data
       - ./sql/init-scripts:/docker-entrypoint-initdb.d
+    networks:
+      - order-system-network
+
+  kafka:
+    image: confluentinc/cp-kafka:latest
+    hostname: order-system-kafka
+    container_name: order-system-kafka
+    ports:
+      - "29093:29092"  # External access for host machine
+      - "9094:9093"    # Controller port
+    environment:
+      KAFKA_KRAFT_MODE: "true"
+      KAFKA_PROCESS_ROLES: "controller,broker"
+      KAFKA_NODE_ID: 1
+      CLUSTER_ID: "2WonQXwPTqWpfq3dZ40aXQ"  # 22-character random string
+      KAFKA_CONTROLLER_QUORUM_VOTERS: "1@order-system-kafka:9093"
+      KAFKA_LISTENERS: PLAINTEXT_INTERNAL://0.0.0.0:9092,CONTROLLER://0.0.0.0:9093,PLAINTEXT_HOST://0.0.0.0:29092
+      # KAFKA_LISTENERS: "PLAINTEXT_INTERNAL://0.0.0.0:9092,CONTROLLER://0.0.0.0:9093,PLAINTEXT_HOST://0.0.0.0:29092"
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT_INTERNAL://order-system-kafka:9092,PLAINTEXT_HOST://localhost:29092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: "CONTROLLER:PLAINTEXT,PLAINTEXT_INTERNAL:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT"
+      KAFKA_CONTROLLER_LISTENER_NAMES: "CONTROLLER"
+      KAFKA_INTER_BROKER_LISTENER_NAME: "PLAINTEXT_INTERNAL"
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+    volumes:
+      - ./data/kafka:/var/lib/kafka/data
+    healthcheck:
+      test: ["CMD-SHELL", "kafka-broker-api-versions --bootstrap-server order-system-kafka:9092"]
+      interval: 10s
+      timeout: 10s
+      retries: 20
+    networks:
+      - order-system-network
+
+  kafdrop:
+    image: obsidiandynamics/kafdrop:latest
+    container_name: order-system-kafdrop
+    depends_on:
+      kafka:
+        condition: service_healthy
+    ports:
+      - "9001:9000"
+    environment:
+      KAFKA_BROKERCONNECT: "order-system-kafka:9092"
+      JVM_OPTS: "-Xms32M -Xmx64M"
+    networks:
+      - order-system-network
+  
+  order-service:
+    build: ./order
+    container_name: order-service
+    depends_on:
+      - postgres
+      - kafka
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://order-system-db:5432/order_system
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+      SPRING_KAFKA_PRODUCER_BOOTSTRAP_SERVERS: order-system-kafka:9092
+      SPRING_KAFKA_CONSUMER_BOOTSTRAP_SERVERS: order-system-kafka:9092
+    ports:
+      - "8080:8080"
+    networks:
+      - order-system-network
+
+  inventory-service:
+    build: ./inventory
+    container_name: inventory-service
+    depends_on:
+      - postgres
+      - kafka
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://order-system-db:5432/order_system
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+      SPRING_KAFKA_PRODUCER_BOOTSTRAP_SERVERS: order-system-kafka:9092
+      SPRING_KAFKA_CONSUMER_BOOTSTRAP_SERVERS: order-system-kafka:9092
+    ports:
+      - "8081:8081"
+    networks:
+      - order-system-network
+
+
+  payment-service:
+    build: ./payment
+    container_name: payment-service
+    depends_on:
+      - postgres
+      - kafka
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://order-system-db:5432/order_system
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+      SPRING_KAFKA_PRODUCER_BOOTSTRAP_SERVERS: order-system-kafka:9092
+      SPRING_KAFKA_CONSUMER_BOOTSTRAP_SERVERS: order-system-kafka:9092
+    ports:
+      - "8082:8082"
+    networks:
+      - order-system-network
+
+
+  notification-service:
+    build: ./notification
+    container_name: notification-service
+    depends_on:
+      - postgres
+      - kafka
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://order-system-db:5432/order_system
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+      SPRING_KAFKA_PRODUCER_BOOTSTRAP_SERVERS: order-system-kafka:9092
+      SPRING_KAFKA_CONSUMER_BOOTSTRAP_SERVERS: order-system-kafka:9092
+    ports:
+      - "8083:8083"
+    networks:
+      - order-system-network
+
+
+networks:
+  order-system-network:
+    driver: bridge
+
 volumes:
   postgres_data:
     driver: local
