@@ -2,13 +2,14 @@ package org.mirza.notification.dto;
 
 import lombok.*;
 
-@Getter
 @Setter
-//@Builder
+@Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class PaymentFailedMessageDto extends BaseNotificationDto{
+@Builder
+public class BaseNotificationDto {
     private long userId;
     private long orderId;
     private String eventId;
+    private String message;
 }

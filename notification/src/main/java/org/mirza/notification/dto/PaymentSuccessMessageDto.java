@@ -8,8 +8,8 @@ import java.io.Serializable;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
-public class PaymentSuccessMessageDto implements Serializable {
+//@Builder
+public class PaymentSuccessMessageDto extends BaseNotificationDto implements Serializable {
     private long userId;
     private long orderId;
     private long paymentId;
