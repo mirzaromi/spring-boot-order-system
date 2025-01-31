@@ -39,6 +39,8 @@ public class Notification {
     @Column(nullable = false)
     private NotificationStatusEnum status;
 
+    private String remark;
+
     @CreatedDate
     @Column(nullable = false, updatable = false)
     private Date createdAt;
