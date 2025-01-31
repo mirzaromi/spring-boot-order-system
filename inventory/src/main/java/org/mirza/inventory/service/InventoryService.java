@@ -121,6 +121,9 @@ public class InventoryService {
         Order order = orderRepository.findOrderById(paymentFailedMessageDto.getOrderId())
                 .orElseThrow(() -> new NotFoundException(ExceptionEnum.ORDER_NOT_FOUND));
 
+        order.setStatus(OrderStatusEnum.FAILED);
+        orderRepository.save(order);
+
         List<Inventory> inventories = order.getOrderDetail().stream()
                 .map(orderDetail -> {
                     Inventory inventory = orderDetail.getInventory();
