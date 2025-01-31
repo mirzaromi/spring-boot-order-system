@@ -1,0 +1,1 @@
+INSERT INTO public.notification (status, created_at, id, user_id, event_type, message, updated_at, order_id, remark) VALUES (1, '2025-01-31 07:43:42.126000', 5, 1, 'payment-success', 'Payment successful', '2025-01-31 07:43:42.126000', 78, null);

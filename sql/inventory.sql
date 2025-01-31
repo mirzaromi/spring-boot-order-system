@@ -1,0 +1,3 @@
+INSERT INTO public.inventory (available, price, stock, created_at, id, updated_at, product_id, name) VALUES (true, 2000, 1000, '2025-01-29 13:03:27.000000', 3, '2025-01-29 13:03:29.000000', 'prod-3', 'kaca');
+INSERT INTO public.inventory (available, price, stock, created_at, id, updated_at, product_id, name) VALUES (true, 5000, 225, '2025-01-29 13:03:27.000000', 1, '2025-01-31 07:43:42.024000', 'prod-1', 'botol');
+INSERT INTO public.inventory (available, price, stock, created_at, id, updated_at, product_id, name) VALUES (true, 10000, 750, '2025-01-29 13:03:27.000000', 2, '2025-01-31 07:43:42.025000', 'prod-2', 'sandal');
