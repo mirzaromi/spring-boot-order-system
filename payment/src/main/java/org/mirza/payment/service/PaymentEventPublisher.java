@@ -43,6 +43,7 @@ public class PaymentEventPublisher {
                 .orderId(inventoryMessage.getOrderId())
                 .userId(inventoryMessage.getUserId())
                 .eventId(generateEventId(paymentFailedTopic, inventoryMessage.getOrderId()))
+                .message("Payment failed")
                 .build();
 
         log.info("Publishing payment failed event for order {}", inventoryMessage.getOrderId());

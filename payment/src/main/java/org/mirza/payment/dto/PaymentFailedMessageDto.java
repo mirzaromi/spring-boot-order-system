@@ -9,4 +9,5 @@ public class PaymentFailedMessageDto {
     private long userId;
     private long orderId;
     private String eventId;
+    private String message;
 }
