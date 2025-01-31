@@ -33,8 +33,11 @@ public class Notification {
     @Column(nullable = false)
     private String message;
 
+//    @Column(nullable = false)
+//    private String eventType;
+
     @Column(nullable = false)
-    private String eventType;
+    private String notificationType;
 
     @Column(nullable = false)
     private NotificationStatusEnum status;
