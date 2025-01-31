@@ -10,4 +10,5 @@ public class PaymentSuccessMessageDto {
     private long orderId;
     private long paymentId;
     private String eventId;
+    private String message;
 }

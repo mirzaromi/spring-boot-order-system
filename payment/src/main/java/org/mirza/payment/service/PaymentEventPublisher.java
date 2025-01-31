@@ -31,6 +31,7 @@ public class PaymentEventPublisher {
                 .userId(order.getUser().getId())
                 .paymentId(payment.getId())
                 .eventId(generateEventId(paymentSuccessTopic, order.getId()))
+                .message("Payment successful")
                 .build();
 
         log.info("Publishing payment success event for order {}", order.getId());
